@@ -1,0 +1,38 @@
+# claude
+export PATH="$HOME/.local/bin:$PATH"
+
+# devboxのグローバル設定
+# グローバルのパッケージ管理はmiseにする
+#eval "$(devbox global shellenv)"
+
+# miseでインストールしたものが使えるようにする
+eval "$(mise activate bash)"
+
+# torsoのCLIツール
+$HOME/.turso/env
+
+# ghosstyのビルド用
+# export PATH="$PATH:$HOME/.local/gtk4-layer-shell/bin"
+# export PATH="$PATH:$HOME/.local/ghostty/bin"
+
+# starship
+eval "$(starship init bash)"
+
+# neovim
+export PATH="$PATH:/opt/nvim-linux-x86_64/bin"
+
+# ghq
+ghq-fzf() {
+  local src=$(ghq list | fzf --preview "
+    dir=\"\$(ghq root)/{}\"
+    if ls \"\$dir\"/README.* &>/dev/null; then
+      bat --color=always --style=header,grid --line-range :80 \"\$dir\"/README.*
+    else
+      echo 'NOT EXIST README'
+    fi
+  ")
+  if [ -n "$src" ]; then
+    cd "$(ghq root)/$src"
+  fi
+}
+bind '"\C-xg": "\C-u ghq-fzf\C-m"'
